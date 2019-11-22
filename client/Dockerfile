@@ -4,7 +4,7 @@
 FROM node:alpine as builder
 # we write as builder to mark this phase by a name
 WORKDIR '/app'
-COPY ./node_modules .
+COPY package.json .
 RUN npm install
 COPY . .
 RUN npm run build
