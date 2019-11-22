@@ -21,7 +21,7 @@ script:
 #build production images
 after_success:
   - docker build -t laurisprintify/multi-client ./client
-  - docker build -t laurisprintify/multi-nginx ./ngnx
+  - docker build -t laurisprintify/multi-nginx ./nginx
   - docker build -t laurisprintify/multi-server ./server
   - docker build -t laurisprintify/multi-worker ./worker
   # take images and push them to docker hub. For that we created encrypted docker id and
