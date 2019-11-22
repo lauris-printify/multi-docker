@@ -1,0 +1,64 @@
+version: '3'
+# what containers need to be run and how
+# (image or dockerfile for build, ports, volumes, env data)
+services:
+  nginx:
+    restart: always
+    # if nginx crashes for any reason, restart it
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./nginx
+    ports:
+      - '3050:80'
+      # map 3050 on our localhost to port 80 of nginx. nginx listens to port 80
+  postgres:
+    image: 'postgres:latest'
+  redis:
+    image: 'redis:latest'
+  api:
+  # this was named server but we renamed it not to have confusion in default.conf for nginx
+    build:
+      # because we dont use image from hub, we specifiy dockerfile to build an image
+      dockerfile: Dockerfile.dev
+      # name of dockerfile
+      context: ./server
+      # location of it
+    volumes:
+      - /app/node_modules
+      # this means take the folder from container as it is
+      - ./server:/app
+      # each time /app is accessed (except node_modules folder) it is pointed to ./server folder
+      # if we change server folder source code, it is reflected automatically in container
+      # WE USE :/app BECAUSE IN DOCKERFILE.DEV FOR SERVER IT IS WORKDIR WHERE WE HAVE COPIED
+    environment:
+      # env variables dictates how our server behaves when it is started as a container,
+      # because server uses environment variables for keys.json which are used to connect to db's
+      - REDIS_HOST=redis
+      # when we access a service defined in docker compose file, to refer to it we just get
+      # service name.
+      - REDIS_PORT=6379
+      # this is default port specified by documentation
+      - PGUSER=postgres
+      - PGHOST=postgres
+      - PGDATABASE=postgres
+      - PGPASSWORD=postgres_password
+      - PGPORT=5432
+      # you find this on docker hub documentation of postgress or documentation
+  client:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./client
+    volumes:
+      - /app/node_modules
+      - ./client:/app
+      # WE USE /app BECAUSE IN OUR DOCKERFILE.DEV IT IS WORKDIR
+  worker:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./worker
+    volumes:
+      - /app/node_modules
+      - ./worker:/app
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379

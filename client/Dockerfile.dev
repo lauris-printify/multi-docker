@@ -1,0 +1,18 @@
+FROM node:alpine
+# set up base image
+
+WORKDIR '/app'
+# set up working directory inside container
+
+COPY ./package.json .
+# we copy dependencies file to '.'which is now /app folder in container
+
+RUN npm install
+# install dependencies before copying rest of source files
+# if we install dependencies before installing source files then
+# we can use cached image with dependencies each time
+
+COPY . .
+# copy source files to container /app
+
+CMD ["npm", "run", "start"]
