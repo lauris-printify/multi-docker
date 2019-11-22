@@ -15,7 +15,7 @@ before_install:
   # here we could have project_number_2 image
 # give script to run test
 script:
-  - docker run -e CI=true lauris-printify/react-test npm run test
+  - docker run -e CI=true lauris-printify/react-test npm test
   # here we could have project_number_2 test
 
 #build production images
