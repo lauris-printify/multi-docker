@@ -1,0 +1,35 @@
+# so the difference between this travis.yml and the one in client app,
+# is that here production image is built by travis, pushed to docker hub,
+# travis taps aws on shoulder and aws pulls production image
+
+language: generic
+sudo: required
+# so travis first needs to know we need docker
+services:
+  -docker
+# then we say how to build docker image with name so travis can refer to it.
+# we use .dev dockerfile because it has test suite in. production dockerfile
+# has just build folder on it that is it.
+before_install:
+  - docker build -t lauris-printify/react-test -f ./client/Dockerfile.dev ./client
+  # here we could have project_number_2 image
+# give script to run test
+script:
+  - docker run -e CI=true lauris-printify/react-test npm test
+  # here we could have project_number_2 test
+
+#build production images
+after_success:
+  - docker build -t lauris-printify/multi-client ./client
+  - docker build -t lauris-printify/multi-nginx ./ngnx
+  - docker build -t lauris-printify/multi-server ./server
+  - docker build -t lauris-printify/multi-worker ./worker
+  # take images and push them to docker hub. For that we created encrypted docker id and
+  # docker password environment variables in TravisCI. We will now log in to docker hub.
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  - docker push lauris-printify/multi-client
+  - docker push lauris-printify/multi-nginx
+  - docker push lauris-printify/multi-server
+  - docker push lauris-printify/multi-worker
+
+# deploy to aws
