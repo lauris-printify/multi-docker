@@ -6,7 +6,7 @@ language: generic
 sudo: required
 # so travis first needs to know we need docker
 services:
-  -docker
+  - docker
 # then we say how to build docker image with name so travis can refer to it.
 # we use .dev dockerfile because it has test suite in. production dockerfile
 # has just build folder on it that is it.
@@ -15,7 +15,7 @@ before_install:
   # here we could have project_number_2 image
 # give script to run test
 script:
-  - docker run -e CI=true lauris-printify/react-test npm test
+  - docker run -e CI=true lauris-printify/react-test npm run test
   # here we could have project_number_2 test
 
 #build production images
