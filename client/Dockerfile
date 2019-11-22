@@ -11,7 +11,7 @@ RUN npm run build
 # as a result we will get /build folder in /app folder as workdir is /app
 
 FROM nginx
-COPY ./default.conf /etc/nginx/conf.d/default.conf
+COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
 # set up our nginx server for it to listen to port 3000
 EXPOSE 3000
 COPY --from=builder /app/build /usr/share/nginx/html
