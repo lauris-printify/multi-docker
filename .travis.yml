@@ -20,16 +20,16 @@ script:
 
 #build production images
 after_success:
-  - docker build -t lauris-printify/multi-client ./client
-  - docker build -t lauris-printify/multi-nginx ./ngnx
-  - docker build -t lauris-printify/multi-server ./server
-  - docker build -t lauris-printify/multi-worker ./worker
+  - docker build -t laurisprintify/multi-client ./client
+  - docker build -t laurisprintify/multi-nginx ./ngnx
+  - docker build -t laurisprintify/multi-server ./server
+  - docker build -t laurisprintify/multi-worker ./worker
   # take images and push them to docker hub. For that we created encrypted docker id and
   # docker password environment variables in TravisCI. We will now log in to docker hub.
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
-  - docker push lauris-printify/multi-client
-  - docker push lauris-printify/multi-nginx
-  - docker push lauris-printify/multi-server
-  - docker push lauris-printify/multi-worker
+  - docker push laurisprintify/multi-client
+  - docker push laurisprintify/multi-nginx
+  - docker push laurisprintify/multi-server
+  - docker push laurisprintify/multi-worker
 
 # deploy to aws
