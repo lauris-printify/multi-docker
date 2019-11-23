@@ -33,3 +33,16 @@ after_success:
   - docker push laurisprintify/multi-worker
 
 # deploy to aws
+deploy:
+  edge: true
+  provider: elasticbeanstalk
+  region: "us-east-2"
+  app: multi-docker
+  env: MultiDocker-env
+  bucket_name: elasticbeanstalk-us-east-2-731354883761
+  bucket_path: multi-docker
+  on:
+    branch: master
+    # if we have pushed from feature branch do not deploy it
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY

@@ -1,0 +1,51 @@
+{
+  "AWSEBDockerrunVersion" : 2,
+  "containerDefinitions": [
+    {
+      "name": "client",
+      # name of container
+      "image": "laurisprintify/multi-client",
+      "hostname": "client",
+      # hostname is a way to refer to other containers
+      # within containerDefinitions container array, so that another container
+      # can reach out to another one
+      "essential": false
+      # essential truu would mean if this container crashes,
+      # then all containers in containerDefinitions would be closed down too
+      # first nginx server which routes should be essential
+      # AT LEAST ONE CONTAINER OUT OF THE SET NEEDS TO BE MARKED AS ESSENTIAL
+    },
+    {
+      "name": "server",
+      "image": "laurisprintify/multi-server",
+      "hostname": "api",
+      "essential": false
+    },
+    {
+      "name": "worker",
+      "image": "laurisprintify/multi-worker",
+      "hostname": "worker",
+      "essential": false
+    },
+    {
+      "name": "nginx",
+      "image": "laurisprintify/multi-nginx",
+      "hostname": "nginx",
+      "essential": true,
+      "portMappings": [
+        {
+          "hostPort": 80,
+          # host in this case is the aws machine running all containers
+          "containerPort": 80
+          # this is port for nginx as it listens there
+        }
+      ],
+      "links": ["client", "server"]
+      # in default.conf we told ey, route /api to server, and server referred
+      # to service name based on docker compose file. Here, we need to link
+      # containers first in order for app inside refer to another container.
+      # we link them using names, not hostnames.
+    }
+  ]
+  # each container definition is a service
+}
